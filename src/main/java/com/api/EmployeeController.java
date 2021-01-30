@@ -1,5 +1,6 @@
 package com.api;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,64 +14,41 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EmployeeController {
 
+	@Autowired
+	private EmployeeRepository repo;
 
 	@PostMapping("employees")
-	public ResponseEntity createUser( @RequestBody Employee employee ){
-		
-		System.out.println("Empl Name: "+ employee.getName());
-		
-		// Do business logic
-		
-//		return ResponseEntity.status(HttpStatus.CREATED).build();
-		return new ResponseEntity(HttpStatus.CREATED);
+	public ResponseEntity<Employee> createUser(@RequestBody Employee employee) {
+		System.out.println("Empl Name: " + employee.getName());
+		employee = repo.save(employee);
+		return ResponseEntity.status(HttpStatus.CREATED).body(employee);
 	}
-	
+
 	@GetMapping("/employees")
-	public ResponseEntity getUsers( ){
-		
+	public ResponseEntity<?> getUsers() {
 		System.out.println("Retrieving all emp ");
-		
-		// Do business logic
-		
-//		return ResponseEntity.status(HttpStatus.CREATED).build();
-		return new ResponseEntity(HttpStatus.CREATED);
+		return ResponseEntity.status(HttpStatus.OK).body(repo.findAll());
 	}
-	
+
 	@GetMapping("/employees/{employeeId}")
-	public ResponseEntity getUser( @PathVariable long employeeId ){
-		
-		System.out.println("Retrieving emp "+employeeId);
-		
-		// Do business logic
-		
-//		return ResponseEntity.status(HttpStatus.CREATED).build();
-		return new ResponseEntity(HttpStatus.CREATED);
+	public ResponseEntity<Employee> getUser(@PathVariable long employeeId) {
+		System.out.println("Retrieving emp " + employeeId);
+		return ResponseEntity.status(HttpStatus.OK).body(repo.findById(employeeId).get());
 	}
-	
+
 	@PutMapping("/employees/{employeeId}")
-	public ResponseEntity updateUser( @RequestBody Employee employee, @PathVariable long employeeId ){
-		
-		System.out.println("Updating : "+ employeeId);
-
-		// Do business logic
-		
-//		return ResponseEntity.status(HttpStatus.CREATED).build();
-		return new ResponseEntity(HttpStatus.CREATED);
+	public ResponseEntity<Employee> updateUser(@RequestBody Employee employee, @PathVariable long employeeId) {
+		System.out.println("Updating : " + employeeId);
+		employee.setId(employeeId);
+		employee = repo.save(employee);
+		return ResponseEntity.status(HttpStatus.CREATED).body(employee);
 	}
-	
+
 	@DeleteMapping("/employees/{employeeId}")
-	public ResponseEntity deleteUser(@PathVariable long employeeId ){
-		
-		System.out.println("Deleting "+employeeId);
-
-		// Do business logic
-		
-//		return ResponseEntity.status(HttpStatus.CREATED).build();
-		return new ResponseEntity(HttpStatus.CREATED);
+	public ResponseEntity<?> deleteUser(@PathVariable long employeeId) {
+		System.out.println("Deleting " + employeeId);
+		repo.deleteById(employeeId);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
-	
-	
 
-	
-	
 }
